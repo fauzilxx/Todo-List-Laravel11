@@ -9,33 +9,39 @@ class Task extends Model
 {
     protected $fillable = [
         'title',
-        'is_done',
+        'completed',
         'type',
         'urgency',
         'deadline',
         'description',
-        'tags'
+        'tags',
+        'user_id'
     ];
 
     protected $casts = [
-        'is_done' => 'boolean',
+        'completed' => 'boolean',
         'deadline' => 'date',
         'tags' => 'array',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function scopeActive($query)
     {
-        return $query->where('is_done', false);
+        return $query->where('completed', false);
     }
 
     public function scopeCompleted($query)
     {
-        return $query->where('is_done', true);
+        return $query->where('completed', true);
     }
 
     public function scopeOverdue($query)
     {
-        return $query->where('is_done', false)
+        return $query->where('completed', false)
             ->whereNotNull('deadline')
             ->whereDate('deadline', '<', now());
     }
@@ -55,7 +61,7 @@ class Task extends Model
 
     public function getIsOverdueAttribute()
     {
-        if (!$this->deadline || $this->is_done) {
+        if (!$this->deadline || $this->completed) {
             return false;
         }
         return $this->deadline->isPast();

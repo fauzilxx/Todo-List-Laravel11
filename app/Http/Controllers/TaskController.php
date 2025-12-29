@@ -4,28 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
         $stats = [
-            'total' => Task::count(),
-            'completed' => Task::completed()->count(),
-            'today' => Task::today()->count(),
-            'overdue' => Task::overdue()->count(),
+            'total' => $user->tasks()->count(),
+            'completed' => $user->tasks()->completed()->count(),
+            'today' => $user->tasks()->today()->count(),
+            'overdue' => $user->tasks()->overdue()->count(),
         ];
 
-        $activeTasks = Task::active()->orderBy('deadline', 'asc')->get();
-        $completedTasks = Task::completed()->orderBy('updated_at', 'desc')->get();
+        $activeTasks = $user->tasks()->active()->orderBy('deadline', 'asc')->get();
+        $completedTasks = $user->tasks()->completed()->orderBy('updated_at', 'desc')->get();
 
         return view('index', compact('stats', 'activeTasks', 'completedTasks'));
     }
 
     public function toggle(Task $task)
     {
+        // Ensure the task belongs to the user
+        if ($task->user_id !== Auth::id()) {
+            abort(403);
+        }
+
         $task->update([
-            'is_done' => !$task->is_done
+            'completed' => !$task->completed
         ]);
 
         return back();
@@ -47,7 +55,7 @@ class TaskController extends Controller
             $tags = array_map('trim', explode(',', $request->tags));
         }
 
-        Task::create([
+        Auth::user()->tasks()->create([
             'title' => $request->title,
             'type' => $request->type,
             'urgency' => $request->urgency,
@@ -61,6 +69,11 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        // Ensure the task belongs to the user
+        if ($task->user_id !== Auth::id()) {
+            abort(403);
+        }
+
         $task->delete();
         return back()->with('success', 'Task berhasil dihapus!');
     }

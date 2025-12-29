@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 
 <body>
@@ -24,9 +25,21 @@
                     <p class="brand-tagline">Kelola tugas dengan mudah</p>
                 </div>
             </div>
-            <div class="header-date">
-                <div class="date-label">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l') }}</div>
-                <div class="date-value">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</div>
+            <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+                <div class="header-date">
+                    <div class="date-label">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l') }}</div>
+                    <div class="date-value">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</div>
+                </div>
+                <div class="user-menu">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn-logout"
+                            style="background: none; border: 1px solid #1f2937; color: #1f2937; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+                            Logout
+                        </button>
+                    </form>
+                </div>
             </div>
         </header>
 
@@ -103,7 +116,8 @@
                                 <option value="">Pilih tipe...</option>
                                 <option value="Tugas" {{ old('type') == 'Tugas' ? 'selected' : '' }}>Tugas</option>
                                 <option value="Meeting" {{ old('type') == 'Meeting' ? 'selected' : '' }}>Meeting</option>
-                                <option value="Kegiatan" {{ old('type') == 'Kegiatan' ? 'selected' : '' }}>Kegiatan</option>
+                                <option value="Kegiatan" {{ old('type') == 'Kegiatan' ? 'selected' : '' }}>Kegiatan
+                                </option>
                             </select>
                         </div>
 
@@ -111,8 +125,10 @@
                             <label class="form-label">Urgensi</label>
                             <select name="urgency" class="form-select">
                                 <option value="">Pilih urgensi...</option>
-                                <option value="Penting" {{ old('urgency') == 'Penting' ? 'selected' : '' }}>Penting</option>
-                                <option value="Mendesak" {{ old('urgency') == 'Mendesak' ? 'selected' : '' }}>Mendesak</option>
+                                <option value="Penting" {{ old('urgency') == 'Penting' ? 'selected' : '' }}>Penting
+                                </option>
+                                <option value="Mendesak" {{ old('urgency') == 'Mendesak' ? 'selected' : '' }}>Mendesak
+                                </option>
                                 <option value="Santai" {{ old('urgency') == 'Santai' ? 'selected' : '' }}>Santai</option>
                             </select>
                         </div>
@@ -127,12 +143,14 @@
 
                     <div class="form-group">
                         <label class="form-label">Catatan (opsional)</label>
-                        <textarea name="description" class="form-textarea" placeholder="Detail tambahan...">{{ old('description') }}</textarea>
+                        <textarea name="description" class="form-textarea"
+                            placeholder="Detail tambahan...">{{ old('description') }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Tags (opsional)</label>
-                        <input type="text" name="tags" class="form-input" placeholder="Contoh: Urgent, Pekerjaan, Pribadi" value="{{ old('tags') }}">
+                        <input type="text" name="tags" class="form-input"
+                            placeholder="Contoh: Urgent, Pekerjaan, Pribadi" value="{{ old('tags') }}">
                         <p class="form-hint">Pisahkan dengan koma</p>
                     </div>
 
@@ -179,7 +197,8 @@
                                                 <span class="tag type-{{ strtolower($task->type) }}">{{ $task->type }}</span>
                                             @endif
                                             @if($task->urgency)
-                                                <span class="tag urgency-{{ strtolower($task->urgency) }}">{{ $task->urgency }}</span>
+                                                <span
+                                                    class="tag urgency-{{ strtolower($task->urgency) }}">{{ $task->urgency }}</span>
                                             @endif
                                             @if($task->tags)
                                                 @foreach($task->tags as $tag)
@@ -196,7 +215,8 @@
                                 <div class="task-actions">
                                     <form method="POST" action="/tasks/{{ $task->id }}" style="display: inline;">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn-icon btn-delete" onclick="return confirm('Yakin ingin menghapus task ini?')">
+                                        <button type="submit" class="btn-icon btn-delete"
+                                            onclick="return confirm('Yakin ingin menghapus task ini?')">
                                             <span class="material-symbols-outlined">delete</span>
                                         </button>
                                     </form>
@@ -205,7 +225,8 @@
 
                             @if($task->deadline)
                                 <div class="task-footer">
-                                    <div class="task-deadline {{ $task->is_overdue ? 'overdue' : ($task->deadline->isToday() ? 'today' : '') }}">
+                                    <div
+                                        class="task-deadline {{ $task->is_overdue ? 'overdue' : ($task->deadline->isToday() ? 'today' : '') }}">
                                         <span class="material-symbols-outlined" style="font-size: 16px;">calendar_today</span>
                                         <span>
                                             @if($task->is_overdue)
@@ -235,7 +256,8 @@
                                 <form method="POST" action="/tasks/{{ $task->id }}/toggle" style="display: inline;">
                                     @csrf @method('PATCH')
                                     <button type="submit" class="task-checkbox checked">
-                                        <span class="material-symbols-outlined" style="font-size: 16px; color: white;">check</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size: 16px; color: white;">check</span>
                                     </button>
                                 </form>
                                 <div style="flex: 1;">
@@ -247,7 +269,8 @@
                                                 <span class="tag type-{{ strtolower($task->type) }}">{{ $task->type }}</span>
                                             @endif
                                             @if($task->urgency)
-                                                <span class="tag urgency-{{ strtolower($task->urgency) }}">{{ $task->urgency }}</span>
+                                                <span
+                                                    class="tag urgency-{{ strtolower($task->urgency) }}">{{ $task->urgency }}</span>
                                             @endif
                                             @if($task->tags)
                                                 @foreach($task->tags as $tag)
@@ -264,7 +287,8 @@
                                 <div class="task-actions">
                                     <form method="POST" action="/tasks/{{ $task->id }}" style="display: inline;">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn-icon btn-delete" onclick="return confirm('Yakin ingin menghapus task ini?')">
+                                        <button type="submit" class="btn-icon btn-delete"
+                                            onclick="return confirm('Yakin ingin menghapus task ini?')">
                                             <span class="material-symbols-outlined">delete</span>
                                         </button>
                                     </form>
@@ -301,4 +325,5 @@
         }
     </script>
 </body>
+
 </html>
