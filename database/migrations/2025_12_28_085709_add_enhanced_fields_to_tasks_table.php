@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->string('type')->nullable()->after('title');
+            $table->string('urgency')->nullable()->after('type');
+            $table->date('deadline')->nullable()->after('urgency');
+            $table->text('description')->nullable()->after('deadline');
+            $table->json('tags')->nullable()->after('description');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropColumn(['type', 'urgency', 'deadline', 'description', 'tags']);
+        });
+    }
+};
